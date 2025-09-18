@@ -14,7 +14,6 @@ namespace TextureGroupsConfigurator
     {
         private string defaultPath = "";
         private string enginePath = "";
-        private string defaultPathTest = "\\Config\\TEST.ini";
 
         UnrealIniFile? defaultIniFile = null;
         UnrealIniFile? engineIniFile = null;
@@ -174,6 +173,8 @@ namespace TextureGroupsConfigurator
         {
             int index = 0;
 
+            if(defaultIniFile == null || engineIniFile == null) { return; }
+
             var section = defaultIniFile.Sections["/Script/Engine.TextureLODSettings"];
             var entries = section.GetStructValues("TextureLODGroups");
 
@@ -213,6 +214,8 @@ namespace TextureGroupsConfigurator
             engineIniFile.Save(enginePath);
 
             LoadProfiles();
+
+            MessageBox.Show("Changes succesfully saved", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CB_Platform_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -226,6 +229,7 @@ namespace TextureGroupsConfigurator
         private void CreateNewProfile_Click(object sender, RoutedEventArgs e)
         {
             List<ProfileGroup> groups = (DG_ProfileGroupsTable.ItemsSource as IEnumerable<ProfileGroup>)?.ToList();
+            if(groups == null) { return; }
             int customProfiles = 0;
             foreach (ProfileGroup group in groups)
             {
