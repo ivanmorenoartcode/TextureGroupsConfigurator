@@ -5,6 +5,7 @@ namespace TextureGroupsConfigurator
     internal class ProfileGroup
     {
         public bool IsNew { get; set; }
+        public bool CanDelete { get; set; }
 
         public string Name { get; set; }
         public string DisplayName { get; set; }
@@ -43,7 +44,9 @@ namespace TextureGroupsConfigurator
 
             SetupOriginalValue();
 
-            IsNameReadOnly = !name.StartsWith("TEXTUREGROUP_Project");
+            bool isCustom = name.StartsWith("TEXTUREGROUP_Project");
+            IsNameReadOnly = !isCustom;
+            CanDelete = isCustom;
         }
 
         private string Capitalize(string value)

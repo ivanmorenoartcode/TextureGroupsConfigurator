@@ -1,9 +1,8 @@
 ﻿using System.IO;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
+using System.Windows.Documents;
 
 namespace TextureGroupsConfigurator
 {
@@ -14,13 +13,18 @@ namespace TextureGroupsConfigurator
     {
         private string defaultPath = "";
         private string enginePath = "";
+        private string scalabilityPath = "";
 
         UnrealIniFile? defaultIniFile = null;
         UnrealIniFile? engineIniFile = null;
 
+        UnrealIniFile? scalabilityFile = null;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            LoadScalabilityTab();
         }
 
         #region RESET VALUES
@@ -73,6 +77,24 @@ namespace TextureGroupsConfigurator
             RefreshGrid();
         }
         #endregion
+
+        private void DeleteProfile_Click(object sender, RoutedEventArgs e)
+        {
+            ProfileGroup pg = GetRowItem(sender);
+            DeleteProfile(pg);
+            RefreshGrid();
+        }
+
+        private void DeleteProfile(ProfileGroup profileGroup)
+        {
+            defaultIniFile.Sections["/Script/Engine.TextureLODSettings"].RemoveArrayValue("TextureLODGroups", profileGroup.ToString());
+            List<ProfileGroup> groups = (DG_ProfileGroupsTable.ItemsSource as IEnumerable<ProfileGroup>)?.ToList();
+            if (groups == null) { return; }
+            groups.Remove(groups.First(n => n.Name == profileGroup.Name));
+            DG_ProfileGroupsTable.ItemsSource = groups;
+
+        }
+
         private ProfileGroup? GetRowItem(object sender)
         {
             var button = sender as Button;
@@ -166,14 +188,29 @@ namespace TextureGroupsConfigurator
                 TB_Project.Text = fullPathToFolder;
 
                 LoadProfiles();
+
+                scalabilityPath = $"{fullPathToFolder}\\Config\\DeviceProfile.ini";
+                LoadScalabilitySettingsGrids();
             }
         }
 
         private void ApplyChanges_Click(object sender, RoutedEventArgs e)
         {
+            if (TC_Manager.SelectedIndex == 0)
+            {
+                ApplyChangesProfileGroups();
+            }
+            else
+            {
+                ApplyChangesScalability();
+            }
+        }
+
+        private void ApplyChangesProfileGroups()
+        {
             int index = 0;
 
-            if(defaultIniFile == null || engineIniFile == null) { return; }
+            if (defaultIniFile == null || engineIniFile == null) { return; }
 
             var section = defaultIniFile.Sections["/Script/Engine.TextureLODSettings"];
             var entries = section.GetStructValues("TextureLODGroups");
@@ -218,6 +255,32 @@ namespace TextureGroupsConfigurator
             MessageBox.Show("Changes succesfully saved", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void ApplyChangesScalability()
+        {
+            if (scalabilityFile == null || string.IsNullOrEmpty(TB_Project.Text)) { return; }
+
+            string category = CB_Category.SelectedItem.ToString();
+
+            SetScalabilityGridValue(DG_ScalabilityLOW, category + "@0");
+            SetScalabilityGridValue(DG_ScalabilityMEDIUM, category + "@1");
+            SetScalabilityGridValue(DG_ScalabilityHIGH, category + "@2");
+            SetScalabilityGridValue(DG_ScalabilityEPIC, category + "@3");
+            SetScalabilityGridValue(DG_ScalabilityCINEMATOGRAPHIC, category + "@Cine");
+
+            scalabilityFile.Save(scalabilityPath);
+            LoadScalabilitySettingsGrids();
+            MessageBox.Show("Changes succesfully saved", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void SetScalabilityGridValue(DataGrid dg, string sectionName)
+        {
+            foreach (var item in dg.Items)
+            {
+                ScalabilitySetting scalabilitySetting = item as ScalabilitySetting;
+                scalabilityFile.Sections[sectionName].SetValue(scalabilitySetting.Command, scalabilitySetting.CurrentValue);
+            }
+        }
+
         private void CB_Platform_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!string.IsNullOrEmpty(TB_Project.Text))
@@ -229,7 +292,7 @@ namespace TextureGroupsConfigurator
         private void CreateNewProfile_Click(object sender, RoutedEventArgs e)
         {
             List<ProfileGroup> groups = (DG_ProfileGroupsTable.ItemsSource as IEnumerable<ProfileGroup>)?.ToList();
-            if(groups == null) { return; }
+            if (groups == null) { return; }
             int customProfiles = 0;
             foreach (ProfileGroup group in groups)
             {
@@ -238,6 +301,81 @@ namespace TextureGroupsConfigurator
             string projectName = $"Project{(customProfiles + 1).ToString("D2")}";
             groups.Add(new ProfileGroup(true, $"TEXTUREGROUP_{projectName}", projectName));
             DG_ProfileGroupsTable.ItemsSource = groups;
+        }
+        private void LoadCategoryComboBox()
+        {
+            string defaultPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DeviceProfile.ini");
+            UnrealIniFile defaultValues = UnrealIniFile.Load(defaultPath);
+            List<string> itemsToAdd = new List<string>();
+            foreach (KeyValuePair<string, UnrealIniSection> section in defaultValues.Sections)
+            {
+                string name = section.Key.Split("@")[0];
+                if (!itemsToAdd.Contains(name))
+                {
+                    itemsToAdd.Add(name);
+                }
+            }
+            CB_Category.ItemsSource = itemsToAdd;
+        }
+
+        private void CB_Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TC_Manager.SelectedIndex == 1)
+                LoadScalabilitySettingsGrids();
+        }
+
+        private void LoadScalabilityTab()
+        {
+            LoadCategoryComboBox();
+            LoadScalabilitySettingsGrids();
+        }
+
+        private void LoadScalabilitySettingsGrids()
+        {
+            string defaultPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DeviceProfile.ini");
+            UnrealIniFile defaultValues = UnrealIniFile.Load(defaultPath);
+            string pathRead = scalabilityPath;
+            if (!File.Exists(scalabilityPath))
+            {
+                pathRead = defaultPath;
+            }
+            scalabilityFile = UnrealIniFile.Load(pathRead);
+
+            string category = CB_Category.SelectedItem.ToString();
+            foreach (KeyValuePair<string, UnrealIniSection> section in defaultValues.Sections)
+            {
+                if (section.Key.StartsWith(category))
+                {
+                    List<ScalabilitySetting> scalabilitySettings = new List<ScalabilitySetting>();
+                    foreach (string setting in section.Value.GetAllEntries())
+                    {
+                        string[] line = setting.Split('=');
+                        string command = line[0];
+                        string defaultValue = line[1];
+                        string currentValue = scalabilityFile.Sections[section.Key].GetValue(command);
+                        scalabilitySettings.Add(new ScalabilitySetting(command, defaultValue, currentValue));
+                    }
+                    string gridID = section.Key.ToUpper().Split('@')[1];
+                    switch (gridID)
+                    {
+                        case "0":
+                            DG_ScalabilityLOW.ItemsSource = scalabilitySettings;
+                            break;
+                        case "1":
+                            DG_ScalabilityMEDIUM.ItemsSource = scalabilitySettings;
+                            break;
+                        case "2":
+                            DG_ScalabilityHIGH.ItemsSource = scalabilitySettings;
+                            break;
+                        case "3":
+                            DG_ScalabilityEPIC.ItemsSource = scalabilitySettings;
+                            break;
+                        case "CINE":
+                            DG_ScalabilityCINEMATOGRAPHIC.ItemsSource = scalabilitySettings;
+                            break;
+                    }
+                }
+            }
         }
     }
 }

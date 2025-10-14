@@ -103,6 +103,16 @@ namespace TextureGroupsConfigurator
 
         public UnrealIniSection(string name) => Name = name;
 
+        public void RemoveArrayValue(string key, string value)
+        {
+            if (_values.TryGetValue(key, out var list))
+            {
+                list.Remove(value);
+            }
+
+            _entries.RemoveAll(e => e.Key == key && e.Value == value && e.Mode != "-");
+        }
+
         public void AddEntry(string key, string value)
         {
             string mode = "";

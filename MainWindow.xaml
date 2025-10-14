@@ -1,4 +1,5 @@
 ﻿<Window x:Class="TextureGroupsConfigurator.MainWindow"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,231 +9,350 @@
         Title="Texture Groups Configurator" Height="450" Width="800"
         WindowStyle="SingleBorderWindow"
         Icon="/Icons/UEIcon.ico">
-    <!-- Table-like Grid row -->
-    <Grid Margin="20">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top">
+            <Label Content="Project folder:" 
+                    FontWeight="Bold" 
+                    VerticalAlignment="Center"
+                    Margin="0,0,0,0"/>
+            <TextBox x:Name="TB_Project" Width="300" IsReadOnly="True" Margin="0,0,10,0"/>
+            <Button Content="Browse..." Width="80" Click="SelectProject_Click"/>
+            <Button Padding="5" Content="Apply Changes" Click="ApplyChanges_Click"/>
+        </StackPanel>
+        <TabControl Grid.Row="1" Name="TC_Manager">
+            <TabItem Header="Profile Groups">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,0">
+                                <Label Content="Platform:" 
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"/>
+                                <ComboBox Name="CB_Platform" Width="200" Height="24" SelectedIndex="0" SelectionChanged="CB_Platform_SelectionChanged">
+                                    <ComboBoxItem Content="Windows"/>
+                                    <ComboBoxItem Content="Switch"/>
+                                    <ComboBoxItem Content="PS5"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
+                            <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Padding="5" Content="Create New Profile" Click="CreateNewProfile_Click"/>
+                        </StackPanel>
+                    </Grid>
+                    <DataGrid 
+    Name="DG_ProfileGroupsTable"
+    Grid.Row="1" 
+      AutoGenerateColumns="False"
+      CanUserSortColumns="True"
+      CanUserAddRows="False"
+      CanUserDeleteRows="False"
+      IsReadOnly="False"
+      Margin="0,10,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="" 
+            Visibility="Hidden"
+            Binding="{Binding Name}" 
+            Width="*"/>
+                            <DataGridTemplateColumn Header="" Width="40">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="X"
+            Width="20" Height="20"
+            Tag="{Binding}"
+            Click="DeleteProfile_Click">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding CanDelete}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                            <DataGridTextColumn Header="Group Name" 
+            Binding="{Binding DisplayName}" 
+            Width="*">
+                                <DataGridTextColumn.EditingElementStyle>
+                                    <Style TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNameReadOnly}" Value="True">
+                                                <Setter Property="IsReadOnly" Value="True"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.EditingElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                    Click="Reset_GroupName"
+                    Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top">
-                    <Label Content="Project folder:" 
-           FontWeight="Bold" 
-           VerticalAlignment="Center"
-           Margin="0,0,0,0"/>
+                            <DataGridTextColumn Header="MinLODSize" 
+            Binding="{Binding MinLod}" 
+            Width="*"/>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_MinLODSize"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                    <!-- TextBox shows the selected folder -->
-                    <TextBox x:Name="TB_Project" Width="300" IsReadOnly="True" Margin="0,0,10,0"/>
+                            <DataGridTextColumn Header="MaxLODSize" 
+            Binding="{Binding MaxLod}" 
+            Width="*"/>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_MaxLODSize"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                    <!-- Button to open folder dialog -->
-                    <Button Content="Browse..." Width="80" Click="SelectProject_Click"/>
-                </StackPanel>
+                            <DataGridTextColumn Header="LODBias" 
+            Binding="{Binding LODBias}" 
+            Width="*"/>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_LODBias"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                <!-- Label + ComboBox row -->
-                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,0">
-                    <Label Content="Platform:" 
-               FontWeight="Bold"
-               VerticalAlignment="Center"
-               Margin="0,0,10,0"/>
-                    <ComboBox Name="CB_Platform" Width="200" Height="24" SelectedIndex="0" SelectionChanged="CB_Platform_SelectionChanged">
-                        <ComboBoxItem Content="Windows"/>
-                        <ComboBoxItem Content="Switch"/>
-                        <ComboBoxItem Content="PS5"/>
-                    </ComboBox>
-                </StackPanel>
-            </Grid>
-            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
-                <Button VerticalAlignment="Top" HorizontalAlignment="Center" Padding="5" Content="Apply Changes" Click="ApplyChanges_Click"/>
-                <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Padding="5" Content="Create New Profile" Click="CreateNewProfile_Click"/>
-            </StackPanel>
-        </Grid>
+                            <DataGridTextColumn Header="NumStreamedMips" 
+            Binding="{Binding NumMips}" 
+            Width="*"/>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_NumStreamedMips"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="MinMagFilter">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedItem="{Binding MinMag, Mode=TwoWay}" Width="Auto">
+                                            <sys:String>Point</sys:String>
+                                            <sys:String>Linear</sys:String>
+                                            <sys:String>Aniso</sys:String>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-        <!-- DataGrid row -->
-        <DataGrid 
-            Name="DG_ProfileGroupsTable"
-            Grid.Row="1" 
-              AutoGenerateColumns="False"
-              CanUserSortColumns="True"
-              CanUserAddRows="False"
-              CanUserDeleteRows="False"
-              IsReadOnly="False"
-              Margin="0,10,0,0">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="" 
-                    Visibility="Hidden"
-                    Binding="{Binding Name}" 
-                    Width="*"/>
-                
-                <DataGridTextColumn Header="Group Name" 
-                    Binding="{Binding DisplayName}" 
-                    Width="*">
-                    <DataGridTextColumn.EditingElementStyle>
-                        <Style TargetType="TextBox">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsNameReadOnly}" Value="True">
-                                    <Setter Property="IsReadOnly" Value="True"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </DataGridTextColumn.EditingElementStyle>
-                </DataGridTextColumn>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                            Click="Reset_GroupName"
-                            Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Header="MinLODSize" 
-                    Binding="{Binding MinLod}" 
-                    Width="*"/>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_MinLODSize"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Header="MaxLODSize" 
-                    Binding="{Binding MaxLod}" 
-                    Width="*"/>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_MaxLODSize"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Header="LODBias" 
-                    Binding="{Binding LODBias}" 
-                    Width="*"/>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_LODBias"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
-                <DataGridTextColumn Header="NumStreamedMips" 
-                    Binding="{Binding NumMips}" 
-                    Width="*"/>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_NumStreamedMips"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridComboBoxColumn Header="MinMagFilter" 
-                    SelectedItemBinding="{Binding MinMag}"
-                    Width="*">
-                    <DataGridComboBoxColumn.ItemsSource>
-                        <x:Array Type="{x:Type sys:String}" 
-                         xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                            <sys:String>Point</sys:String>
-                            <sys:String>Linear</sys:String>
-                            <sys:String>Aniso</sys:String>
-                        </x:Array>
-                    </DataGridComboBoxColumn.ItemsSource>
-                </DataGridComboBoxColumn>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_MinMagFilter"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_MinMagFilter"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                <DataGridComboBoxColumn Header="MipFilter" 
-                    SelectedItemBinding="{Binding MipFilter}"
-                    Width="*">
-                    <DataGridComboBoxColumn.ItemsSource>
-                        <x:Array Type="{x:Type sys:String}" 
-                        xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                            <sys:String>Point</sys:String>
-                            <sys:String>Linear</sys:String>
-                            <sys:String>Aniso</sys:String>
-                        </x:Array>
-                    </DataGridComboBoxColumn.ItemsSource>
-                </DataGridComboBoxColumn>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_MipFilter"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                            <DataGridComboBoxColumn Header="MipFilter" 
+            SelectedItemBinding="{Binding MipFilter}"
+            Width="*">
+                                <DataGridComboBoxColumn.ItemsSource>
+                                    <x:Array Type="{x:Type sys:String}" 
+                xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                        <sys:String>Point</sys:String>
+                                        <sys:String>Linear</sys:String>
+                                        <sys:String>Aniso</sys:String>
+                                    </x:Array>
+                                </DataGridComboBoxColumn.ItemsSource>
+                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_MipFilter"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
-                <DataGridComboBoxColumn Header="MipGenSettings" 
-                    SelectedItemBinding="{Binding MipGen}"
-                    Width="*">
-                    <DataGridComboBoxColumn.ItemsSource>
-                        <x:Array Type="{x:Type sys:String}" 
-                        xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                            <sys:String>TMGS_FromTextureGroup</sys:String>
-                            <sys:String>TMGS_SimpleAverage</sys:String>
-                            <sys:String>TMGS_Sharpen0</sys:String>
-                            <sys:String>TMGS_Sharpen1</sys:String>
-                            <sys:String>TMGS_Sharpen2</sys:String>
-                            <sys:String>TMGS_Sharpen3</sys:String>
-                            <sys:String>TMGS_Sharpen4</sys:String>
-                            <sys:String>TMGS_Sharpen5</sys:String>
-                            <sys:String>TMGS_Sharpen6</sys:String>
-                            <sys:String>TMGS_Sharpen7</sys:String>
-                            <sys:String>TMGS_Sharpen8</sys:String>
-                            <sys:String>TMGS_Sharpen9</sys:String>
-                            <sys:String>TMGS_Sharpen10</sys:String>
-                            <sys:String>TMGS_NoMipmaps</sys:String>
-                            <sys:String>TMGS_LeaveExistingMips</sys:String>
-                            <sys:String>TMGS_Blur1</sys:String>
-                            <sys:String>TMGS_Blur2</sys:String>
-                            <sys:String>TMGS_Blur3</sys:String>
-                            <sys:String>TMGS_Blur4</sys:String>
-                            <sys:String>TMGS_Blur5</sys:String>
-                            <sys:String>TMGS_Unfiltered</sys:String>
-                            <sys:String>TMGS_Angular</sys:String>
-                        </x:Array>
-                    </DataGridComboBoxColumn.ItemsSource>
-                </DataGridComboBoxColumn>
-                <DataGridTemplateColumn Header="">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="↺"
-                                Click="Reset_MipGenSettings"
-                                Tag="{Binding}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+                            <DataGridComboBoxColumn Header="MipGenSettings" 
+            SelectedItemBinding="{Binding MipGen}"
+            Width="*">
+                                <DataGridComboBoxColumn.ItemsSource>
+                                    <x:Array Type="{x:Type sys:String}" 
+                xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                        <sys:String>TMGS_FromTextureGroup</sys:String>
+                                        <sys:String>TMGS_SimpleAverage</sys:String>
+                                        <sys:String>TMGS_Sharpen0</sys:String>
+                                        <sys:String>TMGS_Sharpen1</sys:String>
+                                        <sys:String>TMGS_Sharpen2</sys:String>
+                                        <sys:String>TMGS_Sharpen3</sys:String>
+                                        <sys:String>TMGS_Sharpen4</sys:String>
+                                        <sys:String>TMGS_Sharpen5</sys:String>
+                                        <sys:String>TMGS_Sharpen6</sys:String>
+                                        <sys:String>TMGS_Sharpen7</sys:String>
+                                        <sys:String>TMGS_Sharpen8</sys:String>
+                                        <sys:String>TMGS_Sharpen9</sys:String>
+                                        <sys:String>TMGS_Sharpen10</sys:String>
+                                        <sys:String>TMGS_NoMipmaps</sys:String>
+                                        <sys:String>TMGS_LeaveExistingMips</sys:String>
+                                        <sys:String>TMGS_Blur1</sys:String>
+                                        <sys:String>TMGS_Blur2</sys:String>
+                                        <sys:String>TMGS_Blur3</sys:String>
+                                        <sys:String>TMGS_Blur4</sys:String>
+                                        <sys:String>TMGS_Blur5</sys:String>
+                                        <sys:String>TMGS_Unfiltered</sys:String>
+                                        <sys:String>TMGS_Angular</sys:String>
+                                    </x:Array>
+                                </DataGridComboBoxColumn.ItemsSource>
+                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn Header="">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="↺"
+                        Click="Reset_MipGenSettings"
+                        Tag="{Binding}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Scalability Settings">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,0">
+                        <Label Content="Category:" 
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0"/>
+                        <ComboBox Name="CB_Category" Width="200" Height="24" SelectedIndex="0" SelectionChanged="CB_Category_SelectionChanged"/>
+                    </StackPanel>
+                    <Grid Grid.Row="1" Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0">LOW</Label>
+                        <Label Grid.Row="0" Grid.Column="1">MEDIUM</Label>
+                        <Label Grid.Row="0" Grid.Column="2">HIGH</Label>
+                        <Label Grid.Row="0" Grid.Column="3">EPIC</Label>
+                        <Label Grid.Row="0" Grid.Column="4">CINEMATOGRAPHIC</Label>
+                        <DataGrid Grid.Row="1" Grid.Column="0"
+                            Name="DG_ScalabilityLOW"
+                                    HeadersVisibility="None" 
+                                  AutoGenerateColumns="False"
+                                    CanUserSortColumns="True"
+                                    CanUserAddRows="False"
+                                    CanUserDeleteRows="False"
+                                    IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
+                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Grid.Row="1" Grid.Column="1"
+    Name="DG_ScalabilityMEDIUM"
+            HeadersVisibility="None" 
+          AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
+                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Grid.Row="1" Grid.Column="2"
+    Name="DG_ScalabilityHIGH"
+            HeadersVisibility="None" 
+          AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
+                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Grid.Row="1" Grid.Column="3"
+    Name="DG_ScalabilityEPIC"
+            HeadersVisibility="None" 
+          AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
+                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Grid.Row="1" Grid.Column="4"
+    Name="DG_ScalabilityCINEMATOGRAPHIC"
+            HeadersVisibility="None" 
+          AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            IsReadOnly="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
+                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
+                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
