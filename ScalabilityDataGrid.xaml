@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="TextureGroupsConfigurator.ScalabilityDataGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TextureGroupsConfigurator">
+    <UserControl.Resources>
+        <local:NotEqualConverter x:Key="NotEqualConverter"/>
+    </UserControl.Resources>
+    <DataGrid Name="ScalabilityGrid"
+        HeadersVisibility="None" 
+      AutoGenerateColumns="False"
+        CanUserSortColumns="True"
+        CanUserAddRows="False"
+        CanUserDeleteRows="False"
+        IsReadOnly="False">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding Command}"/>
+            <DataGridTextColumn Header="" Width="*" IsReadOnly="True"  Binding="{Binding DefaultValue}">
+                <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Background" Value="LightYellow"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                    </Style>
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+            <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}">
+                <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Value="True">
+                                <DataTrigger.Binding>
+                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                        <Binding Path="DefaultValue"/>
+                                        <Binding Path="CurrentValue"/>
+                                    </MultiBinding>
+                                </DataTrigger.Binding>
+                                <Setter Property="Background" Value="LightYellow"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGridTextColumn.ElementStyle>
+            </DataGridTextColumn>
+            <DataGridTemplateColumn Header="">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Button Content="↺"
+                                Click="Reset_CurrentValue"
+                                Tag="{Binding}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

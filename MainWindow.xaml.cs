@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace TextureGroupsConfigurator
 {
@@ -30,59 +30,59 @@ namespace TextureGroupsConfigurator
         #region RESET VALUES
         private void Reset_GroupName(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.DisplayName = pg.Original_DisplayName;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MinLODSize(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.MinLod = pg.Original_MinLod;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MaxLODSize(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.MaxLod = pg.Original_MaxLod;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_LODBias(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.LODBias = pg.Original_LODBias;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_NumStreamedMips(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.NumMips = pg.Original_NumMips;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MinMagFilter(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.MinMag = pg.Original_MinMag;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MipFilter(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.MipFilter = pg.Original_MipFilter;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MipGenSettings(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             pg.MipGen = pg.Original_MipGen;
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         #endregion
 
         private void DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = GetRowItem(sender);
+            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
             DeleteProfile(pg);
-            RefreshGrid();
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
 
         private void DeleteProfile(ProfileGroup profileGroup)
@@ -95,12 +95,6 @@ namespace TextureGroupsConfigurator
 
         }
 
-        private ProfileGroup? GetRowItem(object sender)
-        {
-            var button = sender as Button;
-            return button.Tag as ProfileGroup;
-        }
-
         private void ConstructDefaultAndEnginePath()
         {
             string project = TB_Project.Text;
@@ -109,13 +103,6 @@ namespace TextureGroupsConfigurator
             string configFolder = $"{project}\\Config\\Platforms\\{platform}\\Config";
             defaultPath = $"{configFolder}\\DefaultDeviceProfiles.ini";
             enginePath = $"{configFolder}\\DefaultEngine.ini";
-        }
-
-        private void RefreshGrid()
-        {
-            DG_ProfileGroupsTable.CommitEdit(DataGridEditingUnit.Cell, true);
-            DG_ProfileGroupsTable.CommitEdit(DataGridEditingUnit.Row, true);
-            CollectionViewSource.GetDefaultView(DG_ProfileGroupsTable.ItemsSource).Refresh();
         }
 
         private void LoadProfiles()
@@ -243,8 +230,6 @@ namespace TextureGroupsConfigurator
                     section.AddEntry("+TextureLODGroups", profileGroup.ToString());
                 }
                 index++;
-
-                profileGroup.SaveValues();
             }
 
             defaultIniFile.Save(defaultPath);
@@ -261,13 +246,14 @@ namespace TextureGroupsConfigurator
 
             string category = CB_Category.SelectedItem.ToString();
 
-            SetScalabilityGridValue(DG_ScalabilityLOW, category + "@0");
-            SetScalabilityGridValue(DG_ScalabilityMEDIUM, category + "@1");
-            SetScalabilityGridValue(DG_ScalabilityHIGH, category + "@2");
-            SetScalabilityGridValue(DG_ScalabilityEPIC, category + "@3");
-            SetScalabilityGridValue(DG_ScalabilityCINEMATOGRAPHIC, category + "@Cine");
+            SetScalabilityGridValue(DG_ScalabilityLOW.ScalabilityGrid, category + "@0");
+            SetScalabilityGridValue(DG_ScalabilityMEDIUM.ScalabilityGrid, category + "@1");
+            SetScalabilityGridValue(DG_ScalabilityHIGH.ScalabilityGrid, category + "@2");
+            SetScalabilityGridValue(DG_ScalabilityEPIC.ScalabilityGrid, category + "@3");
+            SetScalabilityGridValue(DG_ScalabilityCINEMATOGRAPHIC.ScalabilityGrid, category + "@Cine");
 
             scalabilityFile.Save(scalabilityPath);
+            
             LoadScalabilitySettingsGrids();
             MessageBox.Show("Changes succesfully saved", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -359,19 +345,19 @@ namespace TextureGroupsConfigurator
                     switch (gridID)
                     {
                         case "0":
-                            DG_ScalabilityLOW.ItemsSource = scalabilitySettings;
+                            DG_ScalabilityLOW.ScalabilityGrid.ItemsSource = scalabilitySettings;
                             break;
                         case "1":
-                            DG_ScalabilityMEDIUM.ItemsSource = scalabilitySettings;
+                            DG_ScalabilityMEDIUM.ScalabilityGrid.ItemsSource = scalabilitySettings;
                             break;
                         case "2":
-                            DG_ScalabilityHIGH.ItemsSource = scalabilitySettings;
+                            DG_ScalabilityHIGH.ScalabilityGrid.ItemsSource = scalabilitySettings;
                             break;
                         case "3":
-                            DG_ScalabilityEPIC.ItemsSource = scalabilitySettings;
+                            DG_ScalabilityEPIC.ScalabilityGrid.ItemsSource = scalabilitySettings;
                             break;
                         case "CINE":
-                            DG_ScalabilityCINEMATOGRAPHIC.ItemsSource = scalabilitySettings;
+                            DG_ScalabilityCINEMATOGRAPHIC.ScalabilityGrid.ItemsSource = scalabilitySettings;
                             break;
                     }
                 }

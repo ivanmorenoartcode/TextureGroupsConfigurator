@@ -9,16 +9,16 @@
         Title="Texture Groups Configurator" Height="450" Width="800"
         WindowStyle="SingleBorderWindow"
         Icon="/Icons/UEIcon.ico">
+    <Window.Resources>
+        <local:NotEqualConverter x:Key="NotEqualConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top">
-            <Label Content="Project folder:" 
-                    FontWeight="Bold" 
-                    VerticalAlignment="Center"
-                    Margin="0,0,0,0"/>
+            <Label Content="Project folder:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,0"/>
             <TextBox x:Name="TB_Project" Width="300" IsReadOnly="True" Margin="0,0,10,0"/>
             <Button Content="Browse..." Width="80" Click="SelectProject_Click"/>
             <Button Padding="5" Content="Apply Changes" Click="ApplyChanges_Click"/>
@@ -52,27 +52,13 @@
                             <Button VerticalAlignment="Bottom" HorizontalAlignment="Center" Padding="5" Content="Create New Profile" Click="CreateNewProfile_Click"/>
                         </StackPanel>
                     </Grid>
-                    <DataGrid 
-    Name="DG_ProfileGroupsTable"
-    Grid.Row="1" 
-      AutoGenerateColumns="False"
-      CanUserSortColumns="True"
-      CanUserAddRows="False"
-      CanUserDeleteRows="False"
-      IsReadOnly="False"
-      Margin="0,10,0,0">
+                    <DataGrid Name="DG_ProfileGroupsTable" Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" Margin="0,10,0,0">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="" 
-            Visibility="Hidden"
-            Binding="{Binding Name}" 
-            Width="*"/>
+                            <DataGridTextColumn Header="" Visibility="Hidden" Binding="{Binding Name}" Width="*"/>
                             <DataGridTemplateColumn Header="" Width="40">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="X"
-            Width="20" Height="20"
-            Tag="{Binding}"
-            Click="DeleteProfile_Click">
+                                        <Button Content="X" Width="20" Height="20" Tag="{Binding}" Click="DeleteProfile_Click">
                                             <Button.Style>
                                                 <Style TargetType="Button">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
@@ -88,9 +74,7 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="Group Name" 
-            Binding="{Binding DisplayName}" 
-            Width="*">
+                            <DataGridTextColumn Header="Group Name" Binding="{Binding DisplayName}" Width="*">
                                 <DataGridTextColumn.EditingElementStyle>
                                     <Style TargetType="TextBox">
                                         <Style.Triggers>
@@ -104,68 +88,150 @@
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                    Click="Reset_GroupName"
-                    Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_GroupName" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="MinLODSize" 
-            Binding="{Binding MinLod}" 
-            Width="*"/>
+                            <DataGridTextColumn Header="MinLODSize" Binding="{Binding MinLod}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_MinLod"/>
+                                                        <Binding Path="MinLod"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_MinLODSize"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_MinLODSize" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="MaxLODSize" 
-            Binding="{Binding MaxLod}" 
-            Width="*"/>
+                            <DataGridTextColumn Header="MaxLODSize" Binding="{Binding MaxLod}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_MaxLod"/>
+                                                        <Binding Path="MaxLod"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_MaxLODSize"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_MaxLODSize" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="LODBias" 
-            Binding="{Binding LODBias}" 
-            Width="*"/>
+                            <DataGridTextColumn Header="LODBias" Binding="{Binding LODBias}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_LODBias"/>
+                                                        <Binding Path="LODBias"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_LODBias"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_LODBias" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTextColumn Header="NumStreamedMips" 
-            Binding="{Binding NumMips}" 
-            Width="*"/>
+                            <DataGridTextColumn Header="NumStreamedMips" Binding="{Binding NumMips}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_NumMips"/>
+                                                        <Binding Path="NumMips"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_NumStreamedMips"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_NumStreamedMips" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+
                             <DataGridTemplateColumn Header="MinMagFilter">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_MinMag"/>
+                                                        <Binding Path="MinMag"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTemplateColumn.CellStyle>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedItem="{Binding MinMag, Mode=TwoWay}" Width="Auto">
+                                        <ComboBox SelectedItem="{Binding MinMag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" Margin="10 0">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="True">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                                    <Binding Path="Default_MinMag"/>
+                                                                    <Binding Path="MinMag"/>
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <Setter Property="FontWeight" Value="Bold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
                                             <sys:String>Point</sys:String>
                                             <sys:String>Linear</sys:String>
                                             <sys:String>Aniso</sys:String>
@@ -173,76 +239,127 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_MinMagFilter"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_MinMagFilter" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridComboBoxColumn Header="MipFilter" 
-            SelectedItemBinding="{Binding MipFilter}"
-            Width="*">
-                                <DataGridComboBoxColumn.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}" 
-                xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                        <sys:String>Point</sys:String>
-                                        <sys:String>Linear</sys:String>
-                                        <sys:String>Aniso</sys:String>
-                                    </x:Array>
-                                </DataGridComboBoxColumn.ItemsSource>
-                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn Header="MipFilter">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_MipFilter"/>
+                                                        <Binding Path="MipFilter"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTemplateColumn.CellStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedItem="{Binding MipFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" Margin="10 0">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="True">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                                    <Binding Path="Default_MipFilter"/>
+                                                                    <Binding Path="MipFilter"/>
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <Setter Property="FontWeight" Value="Bold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                            <sys:String>Point</sys:String>
+                                            <sys:String>Linear</sys:String>
+                                            <sys:String>Aniso</sys:String>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_MipFilter"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_MipFilter" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridComboBoxColumn Header="MipGenSettings" 
-            SelectedItemBinding="{Binding MipGen}"
-            Width="*">
-                                <DataGridComboBoxColumn.ItemsSource>
-                                    <x:Array Type="{x:Type sys:String}" 
-                xmlns:sys="clr-namespace:System;assembly=mscorlib">
-                                        <sys:String>TMGS_FromTextureGroup</sys:String>
-                                        <sys:String>TMGS_SimpleAverage</sys:String>
-                                        <sys:String>TMGS_Sharpen0</sys:String>
-                                        <sys:String>TMGS_Sharpen1</sys:String>
-                                        <sys:String>TMGS_Sharpen2</sys:String>
-                                        <sys:String>TMGS_Sharpen3</sys:String>
-                                        <sys:String>TMGS_Sharpen4</sys:String>
-                                        <sys:String>TMGS_Sharpen5</sys:String>
-                                        <sys:String>TMGS_Sharpen6</sys:String>
-                                        <sys:String>TMGS_Sharpen7</sys:String>
-                                        <sys:String>TMGS_Sharpen8</sys:String>
-                                        <sys:String>TMGS_Sharpen9</sys:String>
-                                        <sys:String>TMGS_Sharpen10</sys:String>
-                                        <sys:String>TMGS_NoMipmaps</sys:String>
-                                        <sys:String>TMGS_LeaveExistingMips</sys:String>
-                                        <sys:String>TMGS_Blur1</sys:String>
-                                        <sys:String>TMGS_Blur2</sys:String>
-                                        <sys:String>TMGS_Blur3</sys:String>
-                                        <sys:String>TMGS_Blur4</sys:String>
-                                        <sys:String>TMGS_Blur5</sys:String>
-                                        <sys:String>TMGS_Unfiltered</sys:String>
-                                        <sys:String>TMGS_Angular</sys:String>
-                                    </x:Array>
-                                </DataGridComboBoxColumn.ItemsSource>
-                            </DataGridComboBoxColumn>
+                            <DataGridTemplateColumn Header="MipGenSettings">
+                                <DataGridTemplateColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                        <Binding Path="Default_MipGen"/>
+                                                        <Binding Path="MipGen"/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
+                                                <Setter Property="Background" Value="LightYellow"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTemplateColumn.CellStyle>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox SelectedItem="{Binding MipGen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto" Margin="10 0">
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="True">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource NotEqualConverter}">
+                                                                    <Binding Path="Default_MipGen"/>
+                                                                    <Binding Path="MipGen"/>
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <Setter Property="FontWeight" Value="Bold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ComboBox.Style>
+                                            <sys:String>TMGS_FromTextureGroup</sys:String>
+                                            <sys:String>TMGS_SimpleAverage</sys:String>
+                                            <sys:String>TMGS_Sharpen0</sys:String>
+                                            <sys:String>TMGS_Sharpen1</sys:String>
+                                            <sys:String>TMGS_Sharpen2</sys:String>
+                                            <sys:String>TMGS_Sharpen3</sys:String>
+                                            <sys:String>TMGS_Sharpen4</sys:String>
+                                            <sys:String>TMGS_Sharpen5</sys:String>
+                                            <sys:String>TMGS_Sharpen6</sys:String>
+                                            <sys:String>TMGS_Sharpen7</sys:String>
+                                            <sys:String>TMGS_Sharpen8</sys:String>
+                                            <sys:String>TMGS_Sharpen9</sys:String>
+                                            <sys:String>TMGS_Sharpen10</sys:String>
+                                            <sys:String>TMGS_NoMipmaps</sys:String>
+                                            <sys:String>TMGS_LeaveExistingMips</sys:String>
+                                            <sys:String>TMGS_Blur1</sys:String>
+                                            <sys:String>TMGS_Blur2</sys:String>
+                                            <sys:String>TMGS_Blur3</sys:String>
+                                            <sys:String>TMGS_Blur4</sys:String>
+                                            <sys:String>TMGS_Blur5</sys:String>
+                                            <sys:String>TMGS_Unfiltered</sys:String>
+                                            <sys:String>TMGS_Angular</sys:String>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="↺"
-                        Click="Reset_MipGenSettings"
-                        Tag="{Binding}" />
+                                        <Button Content="↺" Click="Reset_MipGenSettings" Tag="{Binding}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -280,76 +397,11 @@
                         <Label Grid.Row="0" Grid.Column="2">HIGH</Label>
                         <Label Grid.Row="0" Grid.Column="3">EPIC</Label>
                         <Label Grid.Row="0" Grid.Column="4">CINEMATOGRAPHIC</Label>
-                        <DataGrid Grid.Row="1" Grid.Column="0"
-                            Name="DG_ScalabilityLOW"
-                                    HeadersVisibility="None" 
-                                  AutoGenerateColumns="False"
-                                    CanUserSortColumns="True"
-                                    CanUserAddRows="False"
-                                    CanUserDeleteRows="False"
-                                    IsReadOnly="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
-                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <DataGrid Grid.Row="1" Grid.Column="1"
-    Name="DG_ScalabilityMEDIUM"
-            HeadersVisibility="None" 
-          AutoGenerateColumns="False"
-            CanUserSortColumns="True"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            IsReadOnly="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
-                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <DataGrid Grid.Row="1" Grid.Column="2"
-    Name="DG_ScalabilityHIGH"
-            HeadersVisibility="None" 
-          AutoGenerateColumns="False"
-            CanUserSortColumns="True"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            IsReadOnly="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
-                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <DataGrid Grid.Row="1" Grid.Column="3"
-    Name="DG_ScalabilityEPIC"
-            HeadersVisibility="None" 
-          AutoGenerateColumns="False"
-            CanUserSortColumns="True"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            IsReadOnly="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
-                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                        <DataGrid Grid.Row="1" Grid.Column="4"
-    Name="DG_ScalabilityCINEMATOGRAPHIC"
-            HeadersVisibility="None" 
-          AutoGenerateColumns="False"
-            CanUserSortColumns="True"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            IsReadOnly="False">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding Command}"/>
-                                <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding DefaultValue}"/>
-                                <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                        <local:ScalabilityDataGrid Grid.Row="1" Grid.Column="0" x:Name="DG_ScalabilityLOW" />
+                        <local:ScalabilityDataGrid Grid.Row="1" Grid.Column="1" x:Name="DG_ScalabilityMEDIUM" />
+                        <local:ScalabilityDataGrid Grid.Row="1" Grid.Column="2" x:Name="DG_ScalabilityHIGH" />
+                        <local:ScalabilityDataGrid Grid.Row="1" Grid.Column="3" x:Name="DG_ScalabilityEPIC" />
+                        <local:ScalabilityDataGrid Grid.Row="1" Grid.Column="4" x:Name="DG_ScalabilityCINEMATOGRAPHIC" />
                     </Grid>
                 </Grid>
             </TabItem>

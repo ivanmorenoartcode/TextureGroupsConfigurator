@@ -17,6 +17,14 @@ namespace TextureGroupsConfigurator
         public string MipFilter { get; set; }
         public string MipGen { get; set; }
 
+        public string Default_MinLod { get; set; } = "1";
+        public string Default_MaxLod { get; set; } = "16384";
+        public string Default_LODBias { get; set; } = "0";
+        public string Default_NumMips { get; set; } = "-1";
+        public string Default_MinMag { get; set; } = "Aniso";
+        public string Default_MipFilter { get; set; } = "Point";
+        public string Default_MipGen { get; set; } = "TMGS_SimpleAverage";
+
         public string Original_Name { get; set; }
         public string Original_DisplayName { get; set; }
         public string Original_MinLod { get; set; }
@@ -34,13 +42,13 @@ namespace TextureGroupsConfigurator
             IsNew = isNew;
             Name = name;
             DisplayName = displayName;
-            MinLod = minLod != null ? minLod : "1";
-            MaxLod = maxLod != null ? maxLod : "16384";
-            LODBias = lODBias != null ? lODBias : "0";
-            NumMips = numMips != null ? numMips : "-1";
-            MinMag = minMag != null ? Capitalize(minMag) : "Aniso";
-            MipFilter = mipFilter != null ? Capitalize(mipFilter) : "Point";
-            MipGen = mipGen != null ? mipGen : "TMGS_SimpleAverage";
+            MinLod = minLod != null ? minLod : Default_MinLod;
+            MaxLod = maxLod != null ? maxLod : Default_MaxLod;
+            LODBias = lODBias != null ? lODBias : Default_LODBias;
+            NumMips = numMips != null ? numMips : Default_NumMips;
+            MinMag = minMag != null ? Capitalize(minMag) : Default_MinMag;
+            MipFilter = mipFilter != null ? Capitalize(mipFilter) : Default_MipFilter;
+            MipGen = mipGen != null ? mipGen : Default_MipGen;
 
             SetupOriginalValue();
 
@@ -56,18 +64,6 @@ namespace TextureGroupsConfigurator
         }
 
         private void SetupOriginalValue()
-        {
-            Original_Name = Name;
-            Original_DisplayName = DisplayName;
-            Original_MinLod = MinLod;
-            Original_MaxLod = MaxLod;
-            Original_LODBias = LODBias;
-            Original_NumMips = NumMips;
-            Original_MinMag = MinMag;
-            Original_MipFilter = MipFilter;
-            Original_MipGen = MipGen;
-        }
-        public void SaveValues()
         {
             Original_Name = Name;
             Original_DisplayName = DisplayName;
