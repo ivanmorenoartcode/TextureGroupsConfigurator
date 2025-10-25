@@ -13,18 +13,25 @@
         CanUserDeleteRows="False"
         IsReadOnly="False">
         <DataGrid.Columns>
-            <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding Command}"/>
-            <DataGridTextColumn Header="" Width="*" IsReadOnly="True"  Binding="{Binding DefaultValue}">
+            <DataGridTextColumn Header="" Width="*" IsReadOnly="True" Binding="{Binding Command}" ElementStyle="{StaticResource DefaultTextCell}">
+                <DataGridTextColumn.CellStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
+                        <Setter Property="ToolTip" Value="{Binding Command}" />
+                    </Style>
+                </DataGridTextColumn.CellStyle>
+            </DataGridTextColumn>
+            <DataGridTextColumn Header="" Width="Auto" IsReadOnly="True"  Binding="{Binding DefaultValue}">
                 <DataGridTextColumn.ElementStyle>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Background" Value="LightYellow"/>
-                        <Setter Property="Foreground" Value="Black"/>
+                    <Style BasedOn="{StaticResource NumberTextCell}" TargetType="TextBlock">
+                        <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                        <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
                     </Style>
                 </DataGridTextColumn.ElementStyle>
             </DataGridTextColumn>
-            <DataGridTextColumn Header="" Width="*" Binding="{Binding CurrentValue}">
+            <DataGridTextColumn Header="" Width="Auto" Binding="{Binding CurrentValue}" EditingElementStyle="{StaticResource NumberTextEditingCell}">
                 <DataGridTextColumn.ElementStyle>
-                    <Style TargetType="TextBlock">
+                    <Style BasedOn="{StaticResource NumberTextCell}" TargetType="TextBlock">
                         <Style.Triggers>
                             <DataTrigger Value="True">
                                 <DataTrigger.Binding>
@@ -33,8 +40,9 @@
                                         <Binding Path="CurrentValue"/>
                                     </MultiBinding>
                                 </DataTrigger.Binding>
-                                <Setter Property="Background" Value="LightYellow"/>
-                                <Setter Property="Foreground" Value="Black"/>
+                                <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -45,7 +53,8 @@
                     <DataTemplate>
                         <Button Content="↺"
                                 Click="Reset_CurrentValue"
-                                Tag="{Binding}" />
+                                Tag="{Binding}" 
+                                Style="{StaticResource ButtonCell}"/>
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>

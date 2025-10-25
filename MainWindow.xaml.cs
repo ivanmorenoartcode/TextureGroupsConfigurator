@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -306,7 +307,7 @@ namespace TextureGroupsConfigurator
 
         private void CB_Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (TC_Manager.SelectedIndex == 1)
+            if (TC_Manager.SelectedIndex == 2)
                 LoadScalabilitySettingsGrids();
         }
 
