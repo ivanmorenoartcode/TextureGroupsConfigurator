@@ -184,7 +184,7 @@ namespace TextureGroupsConfigurator
 
         private void ApplyChanges_Click(object sender, RoutedEventArgs e)
         {
-            if (TC_Manager.SelectedIndex == 0)
+            if (TC_Manager.SelectedIndex == 1)
             {
                 ApplyChangesProfileGroups();
             }

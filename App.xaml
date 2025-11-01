@@ -281,6 +281,7 @@
             <Setter Property="BorderThickness" Value="0 0 0 1"/>
             <Setter Property="BorderBrush" Value="{StaticResource ControlsPrimaryBackground}"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="0" />
         </Style>
         <Style x:Key="DefaultTextCell" TargetType="TextBlock">
             <Setter Property="Background" Value="{StaticResource ControlsSecondaryBackground}"/>
@@ -293,8 +294,8 @@
             <Setter Property="Background" Value="{StaticResource ControlsSecondaryBackground}"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryForeground}"/>
             <Setter Property="TextAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="4"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
         </Style>
         <Style x:Key="NumberTextCell" TargetType="TextBlock" BasedOn="{StaticResource DefaultTextCell}">
             <Setter Property="TextAlignment" Value="Right"/>
@@ -315,7 +316,7 @@
                              CornerRadius="0"
                              Padding="8 4">
                             <ContentPresenter HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+                                VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">

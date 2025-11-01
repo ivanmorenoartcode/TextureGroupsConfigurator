@@ -201,7 +201,9 @@
                                                         <Binding Path="MinLod"/>
                                                     </MultiBinding>
                                                 </DataTrigger.Binding>
+                                                <!--
                                                 <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                                -->
                                                 <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                                                 <Setter Property="FontWeight" Value="Bold"/>
                                             </DataTrigger>
@@ -228,7 +230,9 @@
                                                         <Binding Path="MaxLod"/>
                                                     </MultiBinding>
                                                 </DataTrigger.Binding>
+                                                <!--
                                                 <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                                -->
                                                 <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                                                 <Setter Property="FontWeight" Value="Bold"/>
                                             </DataTrigger>
@@ -255,7 +259,9 @@
                                                         <Binding Path="LODBias"/>
                                                     </MultiBinding>
                                                 </DataTrigger.Binding>
+                                                <!--
                                                 <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                                -->
                                                 <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                                                 <Setter Property="FontWeight" Value="Bold"/>
                                             </DataTrigger>
@@ -282,7 +288,9 @@
                                                         <Binding Path="NumMips"/>
                                                     </MultiBinding>
                                                 </DataTrigger.Binding>
+                                                <!--
                                                 <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                                -->
                                                 <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                                                 <Setter Property="FontWeight" Value="Bold"/>
                                             </DataTrigger>

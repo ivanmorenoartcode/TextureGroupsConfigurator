@@ -23,7 +23,9 @@
             <DataGridTextColumn Header="" Width="Auto" IsReadOnly="True"  Binding="{Binding DefaultValue}">
                 <DataGridTextColumn.ElementStyle>
                     <Style BasedOn="{StaticResource NumberTextCell}" TargetType="TextBlock">
+                        <!--
                         <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                        -->
                         <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                     </Style>
@@ -40,7 +42,9 @@
                                         <Binding Path="CurrentValue"/>
                                     </MultiBinding>
                                 </DataTrigger.Binding>
+                                <!--
                                 <Setter Property="Background" Value="{StaticResource ControlsPrimaryBackground}"/>
+                                -->
                                 <Setter Property="Foreground" Value="{StaticResource SecondaryButton}"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
                             </DataTrigger>
@@ -48,7 +52,7 @@
                     </Style>
                 </DataGridTextColumn.ElementStyle>
             </DataGridTextColumn>
-            <DataGridTemplateColumn Header="">
+            <DataGridTemplateColumn Header="" Width="Auto">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <Button Content="↺"
