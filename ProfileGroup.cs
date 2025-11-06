@@ -4,6 +4,7 @@ namespace TextureGroupsConfigurator
 {
     internal class ProfileGroup
     {
+        public bool IsSelected { get; set; } = false;
         public bool IsNew { get; set; }
         public bool CanDelete { get; set; }
 

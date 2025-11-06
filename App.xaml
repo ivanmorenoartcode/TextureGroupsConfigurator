@@ -331,7 +331,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+        <Style x:Key="FullCellCheckBox" TargetType="CheckBox">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
         <!-- DataGridComboBox -->
         <!-- ComboBox -->
         <Style x:Key="ComboBoxToggleButtonCell" TargetType="ToggleButton">

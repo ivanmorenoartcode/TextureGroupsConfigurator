@@ -138,9 +138,26 @@
                             </Button.Template>
                         </Button>
                     </Grid>
-                    <DataGrid Name="DG_ProfileGroupsTable" Cursor="Arrow" Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" Margin="0,10,0,0">
+                    <DataGrid Name="DG_ProfileGroupsTable" Cursor="Arrow" Grid.Row="1" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" Margin="0,10,0,0" 
+                              CellEditEnding="DG_ProfileGroupsTable_CellEditEnding">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="" Visibility="Hidden" Binding="{Binding Name}" Width="*"/>
+
+                            <DataGridTemplateColumn Width="Auto">
+                                <DataGridTemplateColumn.Header>
+                                    <CheckBox Content=""
+                                                Style="{StaticResource FullCellCheckBox}"
+                                                Click="HeaderSelectAll_Click"/>
+                                </DataGridTemplateColumn.Header>
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{StaticResource FullCellCheckBox}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
                             <DataGridTemplateColumn Header="" Width="40">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -306,10 +323,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="MinMagFilter">
+                            <DataGridTemplateColumn x:Name="MinMagColumn" Header="MinMagFilter">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedItem="{Binding MinMag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto">
+                                        <ComboBox SelectedItem="{Binding MinMag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="ComboBox_OnSelectionChanged" Width="Auto">
                                             <ComboBox.Style>
                                                 <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxCell}">
                                                     <Style.Triggers>
@@ -341,10 +358,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="MipFilter">
+                            <DataGridTemplateColumn x:Name="MipFilterColumn" Header="MipFilter">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedItem="{Binding MipFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto">
+                                        <ComboBox SelectedItem="{Binding MipFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="ComboBox_OnSelectionChanged" Width="Auto">
                                             <ComboBox.Style>
                                                 <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxCell}">
                                                     <Style.Triggers>
@@ -376,10 +393,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="MipGenSettings">
+                            <DataGridTemplateColumn x:Name="MipGenColumn" Header="MipGenSettings">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox SelectedItem="{Binding MipGen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="Auto">
+                                        <ComboBox SelectedItem="{Binding MipGen, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionChanged="ComboBox_OnSelectionChanged" Width="Auto">
                                             <ComboBox.Style>
                                                 <Style TargetType="ComboBox" BasedOn="{StaticResource ComboBoxCell}">
                                                     <Style.Triggers>

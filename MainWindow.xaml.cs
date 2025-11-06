@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace TextureGroupsConfigurator
 {
@@ -21,6 +23,10 @@ namespace TextureGroupsConfigurator
 
         UnrealIniFile? scalabilityFile = null;
 
+        private int _currentPropagationColumn = -1;
+        private readonly HashSet<ComboBox> _updatedCombos = new();
+        private bool _isPropagating = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,58 +37,260 @@ namespace TextureGroupsConfigurator
         #region RESET VALUES
         private void Reset_GroupName(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.DisplayName = pg.Original_DisplayName;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.DisplayName = clickedRow.Original_DisplayName;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.DisplayName = row.Original_DisplayName;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MinLODSize(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.MinLod = pg.Original_MinLod;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.MinLod = clickedRow.Original_MinLod;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.MinLod = row.Original_MinLod;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MaxLODSize(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.MaxLod = pg.Original_MaxLod;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.MaxLod = clickedRow.Original_MaxLod;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.MaxLod = row.Original_MaxLod;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_LODBias(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.LODBias = pg.Original_LODBias;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.LODBias = clickedRow.Original_LODBias;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.LODBias = row.Original_LODBias;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_NumStreamedMips(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.NumMips = pg.Original_NumMips;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.NumMips = clickedRow.Original_NumMips;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.NumMips = row.Original_NumMips;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MinMagFilter(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.MinMag = pg.Original_MinMag;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.MinMag = clickedRow.Original_MinMag;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.MinMag = row.Original_MinMag;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MipFilter(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.MipFilter = pg.Original_MipFilter;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.MipFilter = clickedRow.Original_MipFilter;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.MipFilter = row.Original_MipFilter;
+            }
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         private void Reset_MipGenSettings(object sender, RoutedEventArgs e)
         {
             ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            pg.MipGen = pg.Original_MipGen;
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only propagate if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                // Just reset this single row
+                clickedRow.MipGen = clickedRow.Original_MipGen;
+                Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                return;
+            }
+
+            // Otherwise, reset all selected rows
+            foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+            {
+                if (!row.IsSelected)
+                    continue;
+
+                row.MipGen = row.Original_MipGen;
+            }
+
+            Helpers.RefreshGrid(DG_ProfileGroupsTable);
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
         #endregion
 
         private void DeleteProfile_Click(object sender, RoutedEventArgs e)
         {
-            ProfileGroup pg = Helpers.GetRowItem(sender) as ProfileGroup;
-            DeleteProfile(pg);
+            if (sender is not Button button)
+                return;
+
+            if (Helpers.GetRowItem(button) is not ProfileGroup clickedRow)
+                return;
+
+            // Only delete all if the clicked row is selected
+            if (!clickedRow.IsSelected)
+            {
+                if (clickedRow.CanDelete)
+                {
+                    DeleteProfile(clickedRow);
+                    Helpers.RefreshGrid(DG_ProfileGroupsTable);
+                }
+                return;
+            }
+
+            // Otherwise, delete all selected rows that can be deleted
+            var toDelete = DG_ProfileGroupsTable.Items
+                .OfType<ProfileGroup>()
+                .Where(pg => pg.IsSelected && pg.CanDelete)
+                .ToList();
+
+            foreach (var row in toDelete)
+                DeleteProfile(row);
+
             Helpers.RefreshGrid(DG_ProfileGroupsTable);
         }
 
@@ -254,7 +462,7 @@ namespace TextureGroupsConfigurator
             SetScalabilityGridValue(DG_ScalabilityCINEMATOGRAPHIC.ScalabilityGrid, category + "@Cine");
 
             scalabilityFile.Save(scalabilityPath);
-            
+
             LoadScalabilitySettingsGrids();
             MessageBox.Show("Changes succesfully saved", "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
@@ -363,6 +571,149 @@ namespace TextureGroupsConfigurator
                     }
                 }
             }
+        }
+
+        private void DG_ProfileGroupsTable_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Row.Item is not ProfileGroup editedItem)
+                return;
+
+            // Only propagate if the edited row itself is selected
+            if (!editedItem.IsSelected)
+                return;
+
+            // Identify the bound property for this column
+            var column = e.Column;
+            var bindingExpr = (column as DataGridBoundColumn)?.Binding as Binding;
+            string propertyName = bindingExpr?.Path?.Path;
+
+            if (string.IsNullOrEmpty(propertyName))
+                return;
+
+            // If this is the DisplayName column, skip everything
+            if (propertyName == nameof(ProfileGroup.DisplayName))
+                return;
+
+            var prop = typeof(ProfileGroup).GetProperty(propertyName);
+            if (prop == null)
+                return;
+
+            // Get the old value before commit
+            var oldValue = prop.GetValue(editedItem);
+
+            // Get the new value from the editing element (still uncommitted)
+            object? newValue = null;
+            if (e.EditingElement is TextBox textBox)
+                newValue = textBox.Text;
+            else if (e.EditingElement is CheckBox checkBox)
+                newValue = checkBox.IsChecked;
+
+            // If no new value or no change, stop here
+            if (newValue == null || Equals(oldValue, newValue))
+                return;
+
+            // Wait until WPF commits the edit, then propagate
+            DG_ProfileGroupsTable.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+                {
+                    if (!row.IsSelected || ReferenceEquals(row, editedItem))
+                        continue;
+
+                    prop.SetValue(row, newValue);
+                }
+
+                // Schedule a final visual refresh only when WPF is idle (safe point)
+                DG_ProfileGroupsTable.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    DG_ProfileGroupsTable.Items.Refresh();
+                }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+            }), System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        private void ComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is not ComboBox combo)
+                return;
+
+            if (combo.DataContext is not ProfileGroup editedItem)
+                return;
+
+            // New value is what was just selected
+            var newValue = e.AddedItems.Count > 0 ? e.AddedItems[0] : null;
+
+            // Old value is what was previously selected
+            var oldValue = e.RemovedItems.Count > 0 ? e.RemovedItems[0] : null;
+
+            // Stop if the old value is not null or empty
+            if (oldValue == null || string.IsNullOrEmpty(oldValue.ToString()))
+                return;
+
+            // Stop if both values are the same
+            if (Equals(oldValue, newValue))
+                return;
+
+            // Only propagate if the edited row itself is selected
+            if (!editedItem.IsSelected)
+                return;
+
+            // Determine which property the ComboBox is bound to
+            var bindingExpr = combo.GetBindingExpression(ComboBox.SelectedItemProperty);
+            var bindingPath = bindingExpr?.ParentBinding?.Path?.Path;
+            if (string.IsNullOrEmpty(bindingPath))
+                return;
+
+            var prop = typeof(ProfileGroup).GetProperty(bindingPath);
+            if (prop == null)
+                return;
+
+            // Update all other selected rows
+            DG_ProfileGroupsTable.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                foreach (var row in DG_ProfileGroupsTable.Items.OfType<ProfileGroup>())
+                {
+                    if (!row.IsSelected || ReferenceEquals(row, editedItem))
+                        continue;
+
+                    prop.SetValue(row, newValue);
+                }
+
+                // Schedule a final visual refresh only when WPF is idle (safe point)
+                DG_ProfileGroupsTable.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    DG_ProfileGroupsTable.Items.Refresh();
+                }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+            }), System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        private void HeaderSelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not CheckBox headerCheckBox)
+                return;
+
+            // Get all rows (ProfileGroups)
+            var allRows = DG_ProfileGroupsTable.Items.OfType<ProfileGroup>().ToList();
+
+            // If only one is selected, unselect all
+            if (allRows.Count(pg => pg.IsSelected) == 1)
+            {
+                foreach (var row in allRows)
+                    row.IsSelected = false;
+
+                DG_ProfileGroupsTable.Items.Refresh();
+                headerCheckBox.IsChecked = false;
+                return;
+            }
+
+            // Otherwise, toggle all to the new header checkbox state
+            bool newState = headerCheckBox.IsChecked == true;
+
+            foreach (var row in allRows)
+                row.IsSelected = newState;
+
+            DG_ProfileGroupsTable.Items.Refresh();
         }
     }
 }
